@@ -1,0 +1,33 @@
+# Python cache / compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Build / packaging
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Logs / temp files
+*.log
+*.tmp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / editor settings
+.vscode/
+.idea/
+
+# Audio & binary outputs
+*.wav
+*.bin

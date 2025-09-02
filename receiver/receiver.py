@@ -3,18 +3,36 @@ import schema.example_pb2 as example_pb2
 
 def main():
 
-    baud = 300
-    proc = subprocess.run(
-        ["minimodem", "--rx", str(baud)],
-        capture_output=True
+    baud = 200
+    proc = subprocess.Popen(
+        ["minimodem", "--rx", "-8", str(baud)],
+        stdout=subprocess.PIPE
     )
 
-    raw = proc.stdout
+    START = b"\x02"   
+    END   = b"\x03"   
+    raw= b""
 
-    msg = example_pb2.Example()
-    msg.ParseFromString(raw)
+    while True:
+        byte = proc.stdout.read(1)
+        if not byte:
+            break
+            
+        raw += byte 
 
-    print(msg)
+        if START in raw and END in raw:
+            start = raw.find(START) + 1
+            end = raw.find(END, start)
+            raw_bytes = raw[start:end]
+
+            msg = example_pb2.Example()
+            msg.ParseFromString(raw_bytes)
+
+            print(msg)
+            break
+    
+    proc.terminate()
+
 
 if __name__ == "__main__":
     main()

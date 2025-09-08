@@ -1,5 +1,5 @@
 import subprocess
-import schema.example_pb2 as example_pb2
+import schema.data_pb2 as data_pb2
 
 baud = 200
 START = b"\x02"   
@@ -10,6 +10,7 @@ def main():
         ["minimodem", "--rx", "-8", str(baud)],
         stdout=subprocess.PIPE
     )
+
     raw= b""
 
     try: 
@@ -26,7 +27,7 @@ def main():
                 packet = raw[start:end]
 
                 try: 
-                    msg = example_pb2.Example()
+                    msg = data_pb2.Example()
                     msg.ParseFromString(packet)
                     print(msg)
                 except Exception as e:

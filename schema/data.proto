@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+message Sensors {
+    float voltage = 1;  
+    float draw = 2;      
+    float gps_lat = 3;   
+    float gps_long = 4; 
+    float velocity = 5; 
+    float throttle = 6;  
+}

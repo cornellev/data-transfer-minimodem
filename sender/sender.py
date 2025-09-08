@@ -1,54 +1,35 @@
-import subprocess, queue, time, threading 
-import schema.example_pb2 as example_pb2 
+import subprocess, time
+import schema.data_pb2 as data_pb2 
 
 baud = 200
 START = b"\x02"   
 END   = b"\x03"  
 
-packets = queue.Queue()
+def main():
+    count = 0
+    while True:
 
-def producer():
-    """
-    Serialize and push (dummy) packets of sensor data to the queue
-    """
-
-    # Hardcoded two packets
-    for i in range(1, 3):
-        msg = example_pb2.Example(
-            field1=(i),
-            field2=float(i),
-            field3=str(i)
+        # Dummy data 
+        msg = data_pb2.Sensors(
+            voltage=1.0 + count,
+            draw=2.0 + count, 
+            gps_lat=3.0 + count,
+            gps_long=4.0 + count,
+            velocity=5.0+count,
+            throttle=6.0+count
         )
 
-        data = msg.SerializeToString()
-        packets.put(data)
-
-        time.sleep(1.0)
-
-def consumer():
-    """
-    Transmit the packets of sensor data to the receiver 
-    """
-
-    for _ in range(2):
-        cur = packets.get()
-        data = START + cur + END 
+        data = START + msg.SerializeToString() + END 
 
         subprocess.run(
-            ["minimodem", "--tx", str(baud), "-f", "test.wav"], 
+            ["minimodem", "--tx", str(baud)], 
             input=data, 
             text=False
         )
 
-def main():
-    prod_thread = threading.Thread(target=producer, daemon=True)
-    cons_thread = threading.Thread(target=consumer, daemon=True)
-
-    prod_thread.start()
-    cons_thread.start()
-
-    prod_thread.join()
-    cons_thread.join()
+        print(f"Sent packet #{count}")
+        count += 1
+        time.sleep(1.0)
 
 if __name__ == "__main__":
     main()

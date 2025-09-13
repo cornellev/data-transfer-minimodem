@@ -1,19 +1,49 @@
-import subprocess 
-import schema.example_pb2 as example_pb2
+import subprocess, time
+import schema.data_pb2 as data_pb2 
+
+baud = 300
+START = b"\x02"   
+END   = b"\x03"  
 
 def main():
+    proc = subprocess.Popen(
+        ["minimodem", "--tx", str(baud)],
+        stdin=subprocess.PIPE,
+        text=False
+    )
+    count = 0
 
-    msg = example_pb2.Example(field1=1, field2=1.0, field3="Test")
-    data = msg.SerializeToString()
+    try:
+        while count < 10:
 
-    baud = 200
+            # Dummy data 
+            msg = data_pb2.Sensors(
+                voltage=1.0 + count,
+                draw=2.0 + count, 
+                gps_lat=3.0 + count,
+                gps_long=4.0 + count,
+                velocity=5.0+count,
+                throttle=6.0+count
+            )
 
-    START = b"\x02"   
-    END   = b"\x03"   
+            data = START + msg.SerializeToString() + END 
+            seconds_in_message = (len(data) * 8) / baud
+            t_time = 1 - seconds_in_message
+            print(str(seconds_in_message))
 
-    new_data = START + data + END 
+            if t_time < 0:
+                raise ValueError("Message is too long for the given baud rate")
 
-    subprocess.run(["minimodem", "--tx", str(baud)], input=new_data, text=False)
+            proc.stdin.write(data)
+            proc.stdin.flush()
+
+            print(f"Sent packet #{count + 1}")
+            count += 1
+            time.sleep(t_time)
+    finally:
+        if proc.stdin:
+            proc.stdin.close()
+        proc.wait()
 
 if __name__ == "__main__":
     main()

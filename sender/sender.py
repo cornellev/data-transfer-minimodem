@@ -1,7 +1,7 @@
 import subprocess, time
 import schema.data_pb2 as data_pb2 
 
-baud = 200
+baud = 300
 START = b"\x02"   
 END   = b"\x03"  
 
@@ -14,7 +14,7 @@ def main():
     count = 0
 
     try:
-        while count < 2:
+        while count < 10:
 
             # Dummy data 
             msg = data_pb2.Sensors(
@@ -27,12 +27,19 @@ def main():
             )
 
             data = START + msg.SerializeToString() + END 
+            seconds_in_message = (len(data) * 8) / baud
+            t_time = 1 - seconds_in_message
+            print(str(seconds_in_message))
+
+            if t_time < 0:
+                raise ValueError("Message is too long for the given baud rate")
+
             proc.stdin.write(data)
             proc.stdin.flush()
 
             print(f"Sent packet #{count + 1}")
             count += 1
-            time.sleep(1.0)
+            time.sleep(t_time)
     finally:
         if proc.stdin:
             proc.stdin.close()

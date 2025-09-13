@@ -27,7 +27,7 @@ def main():
                 packet = raw[start:end]
 
                 try: 
-                    msg = data_pb2.Example()
+                    msg = data_pb2.Sensors()
                     msg.ParseFromString(packet)
                     print(msg)
                 except Exception as e:

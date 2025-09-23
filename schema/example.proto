@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-message Example {
-  int32 field1 = 1;       
-  double field2 = 2;  
-  string field3 = 3;    
-}

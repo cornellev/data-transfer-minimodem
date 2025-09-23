@@ -2,7 +2,7 @@
 
 Audio-based data transfer system using [minimodem](https://www.whence.com/minimodem/).  
 This system serializes structured vehicle sensor data using Protocol Buffers, encodes it into audio tones via minimodem, and then receives/decodes it back into readable data to be visualized on the Race Engineer Dashboard.
-This is meant to be a backup to the primary data stream viewed by the race engineer during competition.
+This is meant to be a backup to the primary data stream (Starlink) viewed by the race engineer during competition.
 
 ---
 
@@ -15,7 +15,7 @@ git clone https://github.com/cornellev/data-transfer-minimodem.git
 cd data-transfer-minimodem
 ```
 
-Install dependencies (minimodem and protobuf):
+Install dependencies:
 ```bash
 # macOS
 brew install minimodem
@@ -42,6 +42,29 @@ Run the receiver module to listen for incoming data, decode it, and deserialize 
 python3 -m receiver.receiver
 ```
 
+---
+
+## Project Structure
+```
+DATA-TRANSFER-MINIMODEM/
+│
+├── receiver/              # Receiver code 
+│   └── receiver.py
+│
+├── schema/                # Protobuf schema definitions
+│   ├── data.proto
+│   ├── data_pb2.py
+│   └── __init__.py
+│
+├── sender/                # Sender code 
+│   └── sender.py
+│
+├── cellular_modem.py      # CellularModem class 
+├── config.py              # Data/voice call configurations
+├── README.md              
+├── requirements.txt       
+└── .gitignore             
+```
 ---
 
 ## Adding/Editing Protobuf Schemas

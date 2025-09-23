@@ -1,0 +1,4 @@
+BAUD = 256
+START = b"\x02"   
+END   = b"\x03"  
+RECEIVER_NUMBER = "1234567890"

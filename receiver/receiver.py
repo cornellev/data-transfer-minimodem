@@ -1,13 +1,12 @@
 import subprocess
-import schema.data_pb2 as data_pb2
+import schema.data_pb2 as data_pb2 
+from config import BAUD, START, END
+from cellular_modem import CellularModem
 
-baud = 200
-START = b"\x02"   
-END   = b"\x03"  
-
-def main():
+def receive_packets():
+    """Receive and print packets of data via minimodem."""
     proc = subprocess.Popen(
-        ["minimodem", "--rx", "-8", str(baud)],
+        ["minimodem", "--rx", "-8", str(BAUD)],
         stdout=subprocess.PIPE
     )
 
@@ -37,6 +36,20 @@ def main():
 
     finally:
         proc.terminate()
+
+def main():
+    modem = CellularModem(power_key=6, port="/dev/ttyS0", baud=115200)
+
+    try:
+        modem.power_on()
+
+        if modem.answer_call():
+            print("Call answered. Packets received:")
+            receive_packets()
+            modem.hangup()
+    finally:
+        modem.power_down()
+        modem.close()
 
 
 if __name__ == "__main__":

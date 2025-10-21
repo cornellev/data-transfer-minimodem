@@ -29,6 +29,7 @@ pip install -r requirements.txt
 ---
 
 ## How to Run
+(Right now, the `MiniModem` class cannot make a voice call due to hardware compatibility issues. The following commands are to run an older version of `sender.py` and `receiver.py` that were not yet integrated with `MiniModem`.)
 
 #### Sending Data 
 Run the sender module to serialize a message and transmit it with minimodem:

@@ -1,7 +1,7 @@
-# data-transfer-minimodem
+# Data Transfer - Modem | FA25
 
 Audio-based data transfer system using [minimodem](https://www.whence.com/minimodem/).  
-This system serializes structured vehicle sensor data using Protocol Buffers, encodes it into audio tones via minimodem, and then receives/decodes it back into readable data to be visualized on the Race Engineer Dashboard.
+This system serializes structured vehicle sensor data using Protocol Buffers, encodes it into audio tones via minimodem using Frequency-Key Shifting (FSK) modulation, and then receives/decodes it back into readable data to be visualized on the Race Engineer Dashboard.
 This is meant to be a backup to the primary data stream (Starlink) viewed by the race engineer during competition.
 
 ---

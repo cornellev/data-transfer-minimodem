@@ -1,7 +1,7 @@
-# data-transfer-minimodem
+# Data Transfer - Modem | FA25
 
 Audio-based data transfer system using [minimodem](https://www.whence.com/minimodem/).  
-This system serializes structured vehicle sensor data using Protocol Buffers, encodes it into audio tones via minimodem, and then receives/decodes it back into readable data to be visualized on the Race Engineer Dashboard.
+This system serializes structured vehicle sensor data using Protocol Buffers, encodes it into audio tones via minimodem using Frequency-Key Shifting (FSK) modulation, and then receives/decodes it back into readable data to be visualized on the Race Engineer Dashboard.
 This is meant to be a backup to the primary data stream (Starlink) viewed by the race engineer during competition.
 
 ---
@@ -29,6 +29,7 @@ pip install -r requirements.txt
 ---
 
 ## How to Run
+(Right now, the `CellularModem` class cannot make a voice call due to hardware compatibility issues. The following commands are to run an older version of `sender.py` and `receiver.py` that were not yet integrated with `CellularModem`.)
 
 #### Sending Data 
 Run the sender module to serialize a message and transmit it with minimodem:

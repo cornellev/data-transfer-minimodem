@@ -26,6 +26,7 @@ def send_packets(n):
             )
 
             data = START + msg.SerializeToString() + END 
+            print(str(len(data)))
             seconds_in_message = (len(data) * 8) / BAUD
             t_time = 1 - seconds_in_message
 

@@ -28,7 +28,7 @@ def receive_packets():
                 try: 
                     msg = data_pb2.Sensors()
                     msg.ParseFromString(packet)
-                    print(msg)
+                    print(str(len(msg)))
                 except Exception as e:
                     print("Failed to parse packet:", e)
                 

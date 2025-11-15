@@ -13,8 +13,8 @@ Transmission Methods (as of Nov 2025):
 Windows users: minimodem does not run natively on Windows. Please install WSL2 with Ubuntu and run this project inside the WSL terminal.
 
 ```bash
-git clone https://github.com/cornellev/data-transfer-minimodem.git
-cd data-transfer-minimodem
+git clone https://github.com/cornellev/data-transfer.git
+cd data-transfer
 ```
 
 Install dependencies:
@@ -32,7 +32,7 @@ pip install -r requirements.txt
 
 ## How to Run
 ```bash
-mode = 'udp' \| 'modem' # Choose one 
+mode = 'udp' | 'modem' # Choose one 
 ```
 
 #### Sending Data 
@@ -51,7 +51,7 @@ python3 receiver/receiver.py --mode mode
 
 ## Project Structure
 ```
-DATA-TRANSFER-MINIMODEM/
+DATA-TRANSFER/
 │
 ├── modes/                 # Transmission modes 
 │   ├── interface.py

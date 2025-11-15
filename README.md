@@ -38,13 +38,13 @@ mode = 'udp' | 'modem' # Choose one
 #### Sending Data 
 Run the sender module to serialize a message and transmit it:
 ```bash
-python3 sender/sender.py --mode mode
+python -m sender.sender --mode mode
 ```
 
 #### Receiving Data 
 Run the receiver module to listen for incoming data, decode it, and deserialize it:
 ```bash
-python3 receiver/receiver.py --mode mode
+python -m receiver.receiver --mode mode
 ```
 
 ---

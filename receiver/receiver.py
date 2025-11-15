@@ -1,14 +1,13 @@
 import argparse, time
 import schema.data_pb2 as data_pb2 
 from config import START, END, BAUD
-from cellular_modem import CellularModem
 from modes import get_mode 
 
 def process_packet(raw: bytes):
     """
     Decode and print a protobuf packet. 
     """
-    if not packet:
+    if not raw:
         return
     start = raw.find(START) + 1
     end = raw.find(END, start)
@@ -30,9 +29,10 @@ def main():
     )
     args = parser.parse_args()
 
-    mode = get_mode(args.mode, baud=BAUD)
+    mode = get_mode(args.mode, baud=BAUD, bind_socket=True)
 
     if args.mode == 'modem':
+        from cellular_modem import CellularModem
         modem = CellularModem(power_key=6, port="/dev/ttyS0", baud=115200)
         try:
             modem.power_on()
@@ -56,7 +56,7 @@ def main():
                 if not packet:
                     break
                 process_packet(packet)
-                time.sleep(0.05)
+                time.sleep(0.001)
         finally:
             mode.close()
 

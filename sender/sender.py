@@ -1,6 +1,5 @@
 import argparse, time
 from config import BAUD, START, END, RECEIVER_NUMBER
-from cellular_modem import CellularModem
 from schema import data_pb2
 from modes import get_mode
 
@@ -28,7 +27,7 @@ def main():
     )
     args = parser.parse_args()
 
-    mode = get_mode(args.mode, baud=BAUD)
+    mode = get_mode(args.mode, baud=BAUD, bind_socket=False)
     n = 10 # number of dummy protobuf packets to send 
 
     def send_loop():
@@ -38,9 +37,11 @@ def main():
         for count in range(n):
             packet = dummy_packet(count)
             mode.send(packet)
-            time.sleep(1)
+            print(f'Packet #{count} was sent.')
+            time.sleep(0.001)
     
-    if mode == 'modem':
+    if args.mode == 'modem':
+        from cellular_modem import CellularModem
         modem = CellularModem(power_key=6, port="/dev/ttyS0", baud=115200)
         try:
             modem.power_on()
@@ -52,7 +53,7 @@ def main():
             modem.power_down()
             modem.close()
             mode.close()
-    elif mode == 'udp':
+    elif args.mode == 'udp':
         send_loop()
         mode.close()   
 

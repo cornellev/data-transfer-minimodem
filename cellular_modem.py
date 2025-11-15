@@ -19,7 +19,9 @@ class CellularModem:
         GPIO.setup(self.power_key, GPIO.OUT)
 
     def power_on(self):
-        """Turn on the SIM7600."""
+        """
+        Turn on the SIM7600.
+        """
         GPIO.output(self.power_key, GPIO.HIGH)
         time.sleep(2)
         GPIO.output(self.power_key, GPIO.LOW)
@@ -28,7 +30,9 @@ class CellularModem:
         print("SIM7600 is powered on.")
 
     def power_down(self):
-        """Turn off the SIM7600."""
+        """
+        Turn off the SIM7600.
+        """
         GPIO.output(self.power_key, GPIO.HIGH)
         time.sleep(3)
         GPIO.output(self.power_key, GPIO.LOW)
@@ -36,7 +40,9 @@ class CellularModem:
         print("SIM7600 is powered off.")
     
     def send_at(self, command, back, timeout=1):
-        """Send an AT command and check for the expected response."""
+        """
+        Send an AT command and check for the expected response.
+        """
         self.ser.write((command + '\r\n').encode())
         time.sleep(timeout)
 
@@ -52,21 +58,29 @@ class CellularModem:
         return True
 
     def dial(self, number):
-        """Dial a number (voice call)."""
+        """
+        Dial a number (voice call).
+        """
         return self.send_at(f"ATD{number};", "OK", 2)
 
     def answer_call(self):
-        """Answer an incoming call."""
+        """
+        Answer an incoming call.
+        """
         return self.send_at("ATA", "OK", 2)
 
     def hangup(self):
-        """Hang up an active call."""
+        """
+        Hang up an active call.
+        """
         self.ser.write(b"AT+CHUP\r\n")
         time.sleep(1)
         print("Call disconnected.")
 
     def close(self):
-        """Cleanup resources (serial and GPIO)."""
+        """
+        Cleanup resources (serial and GPIO).
+        """
         if self.ser:
             self.ser.close()
         GPIO.cleanup()

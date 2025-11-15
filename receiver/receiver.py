@@ -1,56 +1,64 @@
-import subprocess
+import argparse, time
 import schema.data_pb2 as data_pb2 
-from config import BAUD, START, END
+from config import START, END, BAUD
 from cellular_modem import CellularModem
+from modes import get_mode 
 
-def receive_packets():
-    """Receive and print packets of data via minimodem."""
-    proc = subprocess.Popen(
-        ["minimodem", "--rx", "-8", str(BAUD)],
-        stdout=subprocess.PIPE
-    )
-
-    raw= b""
-
+def process_packet(raw: bytes):
+    """
+    Decode and print a protobuf packet. 
+    """
+    if not packet:
+        return
+    start = raw.find(START) + 1
+    end = raw.find(END, start)
+    packet = raw[start:end]
     try: 
-        while True:
-            byte = proc.stdout.read(1)
-            if not byte:
-                break
-                
-            raw += byte 
-
-            while START in raw and END in raw:
-                start = raw.find(START) + 1
-                end = raw.find(END, start)
-                packet = raw[start:end]
-
-                try: 
-                    msg = data_pb2.Sensors()
-                    msg.ParseFromString(packet)
-                    print(str(len(msg)))
-                except Exception as e:
-                    print("Failed to parse packet:", e)
-                
-                raw = raw[end+1:]
-
-    finally:
-        proc.terminate()
+        msg = data_pb2.Sensors()
+        msg.ParseFromString(packet)
+        print(msg)
+    except Exception as e:
+        print("Failed to parse packet:", e)
 
 def main():
-    modem = CellularModem(power_key=6, port="/dev/ttyS0", baud=115200)
+    parser = argparse.ArgumentParser(description="Receive data via UDP or Modem")
+    parser.add_argument(
+        '--mode', 
+        choices=['udp', 'modem'], 
+        required=True, 
+        help="Transmission mode: 'udp' or 'modem'"
+    )
+    args = parser.parse_args()
 
-    try:
-        modem.power_on()
+    mode = get_mode(args.mode, baud=BAUD)
 
-        if modem.answer_call():
-            print("Call answered. Packets received:")
-            receive_packets()
-            modem.hangup()
-    finally:
-        modem.power_down()
-        modem.close()
-
+    if args.mode == 'modem':
+        modem = CellularModem(power_key=6, port="/dev/ttyS0", baud=115200)
+        try:
+            modem.power_on()
+            if modem.answer_call():
+                print("Call answered. Packets received:")
+                while True:
+                    packet = mode.receive()
+                    if not packet:
+                        break
+                    process_packet(packet)
+                    time.sleep(0.05)
+                modem.hangup()
+        finally:
+            modem.power_down()
+            modem.close()
+            mode.close()
+    elif args.mode == 'udp':
+        try: 
+            while True:
+                packet = mode.receive()
+                if not packet:
+                    break
+                process_packet(packet)
+                time.sleep(0.05)
+        finally:
+            mode.close()
 
 if __name__ == "__main__":
     main()

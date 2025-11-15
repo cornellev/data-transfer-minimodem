@@ -1,8 +1,10 @@
-# Data Transfer - Modem | FA25
+# Data Transfer | FA25
 
-Audio-based data transfer system using [minimodem](https://www.whence.com/minimodem/).  
-This system serializes structured vehicle sensor data using Protocol Buffers, encodes it into audio tones via minimodem using Frequency-Key Shifting (FSK) modulation, and then receives/decodes it back into readable data to be visualized on the Race Engineer Dashboard.
-This is meant to be a backup to the primary data stream (Starlink) viewed by the race engineer during competition.
+Wireless data transfer system that serializes structured vehicle sensor data (JSON) using Protocol Buffers, transmits it via the chosen transmission method, then decodes it back into readable data to be visualized on the Race Engineer Dashboard during competition.  
+
+Transmission Methods (as of Nov 2025):
+1. [minimodem](https://www.whence.com/minimodem/): Encodes the data into audio tones using Frequency-Key Shifting (FSK) modulation.
+2. UDP over Starlink 
 
 ---
 
@@ -29,18 +31,20 @@ pip install -r requirements.txt
 ---
 
 ## How to Run
-(Right now, the `CellularModem` class cannot make a voice call due to hardware compatibility issues. The following commands are to run an older version of `sender.py` and `receiver.py` that were not yet integrated with `CellularModem`.)
+```bash
+mode = 'udp' \| 'modem' # Choose one 
+```
 
 #### Sending Data 
-Run the sender module to serialize a message and transmit it with minimodem:
+Run the sender module to serialize a message and transmit it:
 ```bash
-python3 -m sender.sender
+python3 sender/sender.py --mode mode
 ```
 
 #### Receiving Data 
 Run the receiver module to listen for incoming data, decode it, and deserialize it:
 ```bash
-python3 -m receiver.receiver
+python3 receiver/receiver.py --mode mode
 ```
 
 ---
@@ -49,6 +53,12 @@ python3 -m receiver.receiver
 ```
 DATA-TRANSFER-MINIMODEM/
 │
+├── modes/                 # Transmission modes 
+│   ├── interface.py
+│   ├── modem_mode.py
+|   ├── udp_mode.py
+│   └── __init__.py
+|
 ├── receiver/              # Receiver code 
 │   └── receiver.py
 │
